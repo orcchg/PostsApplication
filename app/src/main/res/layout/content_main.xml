@@ -9,6 +9,8 @@
     tools:showIn="@layout/activity_main"
     tools:context=".view.posts.PostsActivity">
 
+    <include layout="@layout/progress_bar" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_posts"
         android:layout_width="match_parent"

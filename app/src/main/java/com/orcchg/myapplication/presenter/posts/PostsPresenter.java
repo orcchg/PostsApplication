@@ -1,11 +1,18 @@
 package com.orcchg.myapplication.presenter.posts;
 
+import android.app.Activity;
+import android.view.View;
+
+import com.orcchg.myapplication.PostsApplication;
+import com.orcchg.myapplication.core.DataManager;
 import com.orcchg.myapplication.model.Post;
+import com.orcchg.myapplication.model.interfaces.IPost;
 import com.orcchg.myapplication.network.RestAdapter;
 import com.orcchg.myapplication.presenter.base.BasePresenter;
 import com.orcchg.myapplication.view.base.MvpView;
 import com.orcchg.myapplication.view.posts.PostsActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -22,11 +29,13 @@ import timber.log.Timber;
  */
 public class PostsPresenter extends BasePresenter<PostsActivity> {
 
-    private final RestAdapter mRestAdapter;
+
+    private final DataManager mDataManager;
+
     private Subscription mSubscription;
 
     public PostsPresenter(MvpView view) {
-        mRestAdapter = RestAdapter.Creator.create();
+        mDataManager = ((PostsApplication) ((Activity) view).getApplication()).getDataManager();
     }
 
     @Override
@@ -37,11 +46,18 @@ public class PostsPresenter extends BasePresenter<PostsActivity> {
         }
     }
 
+    public void onResume() {
+        showContent();
+    }
+
+    public void onInvalidateClicked() {
+        mDataManager.invalidateCache(true);
+    }
+
     public void loadPosts() {
         Timber.d("Load posts");
-        mSubscription = mRestAdapter.getPosts()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        showProgress();
+        mSubscription = mDataManager.getPosts()
                 .subscribe(new Observer<List<Post>>() {
                     @Override
                     public void onCompleted() {
@@ -59,27 +75,27 @@ public class PostsPresenter extends BasePresenter<PostsActivity> {
                 });
     }
 
-    public void loadPostsNoRx() {
-        Timber.d("Load posts deprecated");
-        mRestAdapter.getPostsNoRx().enqueue(new Callback<List<Post>>() {
-            @Override
-            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-                onPostsLoaded(response.body());
-            }
+    private void showContent() {
+        if (isViewAttached()) {
+            getView().showContent();
+        }
+    }
 
-            @Override
-            public void onFailure(Call<List<Post>> call, Throwable t) {
-                Timber.e("Network error !");
-            }
-        });
+    private void showProgress() {
+        if (isViewAttached()) {
+            getView().showProgress();
+        }
     }
 
     private void onPostsLoaded(List<Post> posts) {
+        List<IPost> iPosts = new ArrayList<>();
         for (Post post : posts) {
-            Timber.d(post.toString());
+            iPosts.add(post);
         }
+        mDataManager.getDatabase().addPosts(iPosts);
+        mDataManager.invalidateCache(false);
         if (isViewAttached()) {
-            getView().showPosts(posts);
+            getView().showPosts(iPosts);
         }
     }
 }

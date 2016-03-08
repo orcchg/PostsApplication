@@ -4,9 +4,13 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.orcchg.myapplication.R;
-import com.orcchg.myapplication.model.Post;
+import com.orcchg.myapplication.model.interfaces.IPost;
 import com.orcchg.myapplication.presenter.posts.PostsPresenter;
 import com.orcchg.myapplication.view.base.BaseView;
 
@@ -20,6 +24,7 @@ public class PostsActivity extends BaseView<PostsPresenter> {
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.rv_posts) RecyclerView mPostsListView;
+    @Bind(R.id.page_progress) View mProgressView;
 
     private PostsAdapter mPostsAdapter;
 
@@ -42,12 +47,46 @@ public class PostsActivity extends BaseView<PostsPresenter> {
         mPostsListView.setAdapter(mPostsAdapter);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.onResume();
+    }
+
     @OnClick(R.id.fab)
     public void loadPosts() {
         mPresenter.loadPosts();
     }
 
-    public void showPosts(List<Post> posts) {
+    public void showPosts(List<IPost> posts) {
+        showContent();
         mPostsAdapter.setPosts(posts);
+    }
+
+    public void showContent() {
+        mPostsListView.setVisibility(View.VISIBLE);
+        mProgressView.setVisibility(View.INVISIBLE);
+    }
+
+    public void showProgress() {
+        mPostsListView.setVisibility(View.INVISIBLE);
+        mProgressView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_invalidate:
+                mPresenter.onInvalidateClicked();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

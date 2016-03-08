@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orcchg.myapplication.R;
-import com.orcchg.myapplication.model.Post;
+import com.orcchg.myapplication.model.interfaces.IPost;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
  * Created by MAXA on 07.03.2016.
  */
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostsViewHolder> {
-    private final List<Post> mPosts;
+    private final List<IPost> mPosts;
 
     public static class PostsViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.tv_post_title) TextView mTitleView;
@@ -44,9 +44,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostsViewHol
 
     @Override
     public void onBindViewHolder(PostsViewHolder holder, int position) {
-        Post post = mPosts.get(position);
+        IPost post = mPosts.get(position);
         holder.mTitleView.setText(post.getTitle());
-        holder.mDescriptionView.setText(post.getBody());
+        holder.mDescriptionView.setText(post.getDescription());
     }
 
     @Override
@@ -54,7 +54,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostsViewHol
         return mPosts.size();
     }
 
-    public void setPosts(List<Post> posts) {
+    public void setPosts(List<IPost> posts) {
         if (posts != null && !posts.isEmpty()) {
             mPosts.clear();
             mPosts.addAll(posts);
