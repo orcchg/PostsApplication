@@ -182,7 +182,7 @@ public class PostsDatabase extends SQLiteOpenHelper implements PostsRepository {
                     Timber.e("Error reading from the database", e);
                 }
             }
-        }).subscribeOn(Schedulers.computation());
+        });
     }
 
     /* Factory */

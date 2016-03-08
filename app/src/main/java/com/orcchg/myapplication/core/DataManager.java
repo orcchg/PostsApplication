@@ -51,7 +51,8 @@ public class DataManager {
                 public Observable<List<Post>> call(List<Post> posts) {
                     return Observable.just(posts);
                 }
-            });
+            }).subscribeOn(Schedulers.computation())
+              .observeOn(AndroidSchedulers.mainThread());
         }
     }
 }
