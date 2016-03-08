@@ -1,13 +1,11 @@
 package com.orcchg.myapplication.presenter.posts;
 
 import android.app.Activity;
-import android.view.View;
 
 import com.orcchg.myapplication.PostsApplication;
 import com.orcchg.myapplication.core.DataManager;
 import com.orcchg.myapplication.model.Post;
 import com.orcchg.myapplication.model.interfaces.IPost;
-import com.orcchg.myapplication.network.RestAdapter;
 import com.orcchg.myapplication.presenter.base.BasePresenter;
 import com.orcchg.myapplication.view.base.MvpView;
 import com.orcchg.myapplication.view.posts.PostsActivity;
@@ -15,13 +13,8 @@ import com.orcchg.myapplication.view.posts.PostsActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import rx.Observer;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -56,7 +49,7 @@ public class PostsPresenter extends BasePresenter<PostsActivity> {
 
     public void loadPosts() {
         Timber.d("Load posts");
-        showProgress();
+        showLoading();
         mSubscription = mDataManager.getPosts()
                 .subscribe(new Observer<List<Post>>() {
                     @Override
@@ -66,6 +59,7 @@ public class PostsPresenter extends BasePresenter<PostsActivity> {
                     @Override
                     public void onError(Throwable e) {
                         Timber.e("Network error !");
+                        showError();
                     }
 
                     @Override
@@ -75,15 +69,21 @@ public class PostsPresenter extends BasePresenter<PostsActivity> {
                 });
     }
 
+    private void showLoading() {
+        if (isViewAttached()) {
+            getView().showLoading();
+        }
+    }
+
     private void showContent() {
         if (isViewAttached()) {
             getView().showContent();
         }
     }
 
-    private void showProgress() {
+    private void showError() {
         if (isViewAttached()) {
-            getView().showProgress();
+            getView().showError();
         }
     }
 
@@ -95,7 +95,8 @@ public class PostsPresenter extends BasePresenter<PostsActivity> {
         mDataManager.getDatabase().addPosts(iPosts);
         mDataManager.invalidateCache(false);
         if (isViewAttached()) {
-            getView().showPosts(iPosts);
+            getView().showContent();
+            getView().setPosts(iPosts);
         }
     }
 }

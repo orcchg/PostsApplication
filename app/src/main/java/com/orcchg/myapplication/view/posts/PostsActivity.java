@@ -7,12 +7,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.orcchg.myapplication.R;
 import com.orcchg.myapplication.model.interfaces.IPost;
 import com.orcchg.myapplication.presenter.posts.PostsPresenter;
-import com.orcchg.myapplication.view.base.BaseView;
+import com.orcchg.myapplication.view.base.BaseLceActivity;
 
 import java.util.List;
 
@@ -20,11 +19,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PostsActivity extends BaseView<PostsPresenter> {
+public class PostsActivity extends BaseLceActivity<PostsPresenter> {
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.rv_posts) RecyclerView mPostsListView;
-    @Bind(R.id.page_progress) View mProgressView;
 
     private PostsAdapter mPostsAdapter;
 
@@ -36,7 +34,7 @@ public class PostsActivity extends BaseView<PostsPresenter> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_posts);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -58,19 +56,8 @@ public class PostsActivity extends BaseView<PostsPresenter> {
         mPresenter.loadPosts();
     }
 
-    public void showPosts(List<IPost> posts) {
-        showContent();
+    public void setPosts(List<IPost> posts) {
         mPostsAdapter.setPosts(posts);
-    }
-
-    public void showContent() {
-        mPostsListView.setVisibility(View.VISIBLE);
-        mProgressView.setVisibility(View.INVISIBLE);
-    }
-
-    public void showProgress() {
-        mPostsListView.setVisibility(View.INVISIBLE);
-        mProgressView.setVisibility(View.VISIBLE);
     }
 
     @Override

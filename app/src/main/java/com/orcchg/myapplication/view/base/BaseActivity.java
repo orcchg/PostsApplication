@@ -9,7 +9,7 @@ import com.orcchg.myapplication.presenter.base.MvpPresenter;
 /**
  * Created by MAXA on 07.03.2016.
  */
-public abstract class BaseView<P extends MvpPresenter> extends AppCompatActivity implements MvpView {
+public abstract class BaseActivity<P extends MvpPresenter> extends AppCompatActivity implements MvpView {
 
     protected P mPresenter;
 
