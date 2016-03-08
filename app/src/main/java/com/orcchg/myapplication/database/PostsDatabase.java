@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import com.orcchg.myapplication.database.repository.PostSpecification;
 import com.orcchg.myapplication.database.repository.PostsRepository;
 import com.orcchg.myapplication.model.Post;
-import com.orcchg.myapplication.model.interfaces.IPost;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,13 +87,13 @@ public class PostsDatabase extends SQLiteOpenHelper implements PostsRepository {
     /* Repository */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void addPosts(List<IPost> posts) {
+    public void addPosts(List<Post> posts) {
         SQLiteDatabase db = getWritableDatabase();
 
         db.beginTransaction();
         SQLiteStatement insert = db.compileStatement(INSERT_POSTS_STATEMENT);
 
-        for (IPost post : posts) {
+        for (Post post : posts) {
             insert.bindLong(1, post.getId());
             insert.bindLong(2, post.getUserId());
             insert.bindString(3, post.getTitle());
@@ -107,22 +106,22 @@ public class PostsDatabase extends SQLiteOpenHelper implements PostsRepository {
     }
 
     @Override
-    public void updatePosts(List<IPost> posts) {
+    public void updatePosts(List<Post> posts) {
         addPosts(posts);  // using REPLACE clause
     }
 
     @Override
-    public void removePosts(List<IPost> posts) {
+    public void removePosts(List<Post> posts) {
         final List<Integer> ids = new ArrayList<>();
 
-        Observable.just(posts).flatMap(new Func1<List<IPost>, Observable<IPost>>() {
+        Observable.just(posts).flatMap(new Func1<List<Post>, Observable<Post>>() {
             @Override
-            public Observable<IPost> call(List<IPost> posts) {
+            public Observable<Post> call(List<Post> posts) {
                 return Observable.from(posts);
             }
-        }).map(new Func1<IPost, Integer>() {
+        }).map(new Func1<Post, Integer>() {
             @Override
-            public Integer call(IPost post) {
+            public Integer call(Post post) {
                 return post.getId();
             }
         }).subscribe(new Observer<Integer>() {
@@ -151,21 +150,21 @@ public class PostsDatabase extends SQLiteOpenHelper implements PostsRepository {
     }
 
     @Override
-    public Observable<List<IPost>> getAllPosts() {
+    public Observable<List<Post>> getAllPosts() {
         return queryPosts(null);
     }
 
     @Override
-    public Observable<List<IPost>> queryPosts(@Nullable PostSpecification specification) {
+    public Observable<List<Post>> queryPosts(@Nullable PostSpecification specification) {
         final String statement = specification == null ? READ_ALL_POSTS_STATEMENT : String.format(READ_POSTS_STATEMENT, specification.getSelectionArgs());
 
         final SQLiteDatabase db = getReadableDatabase();
 
-        final Callable<List<IPost>> function = new Callable<List<IPost>>() {
+        final Callable<List<Post>> function = new Callable<List<Post>>() {
             @Override
-            public List<IPost> call() throws Exception {
+            public List<Post> call() throws Exception {
                 Cursor cursor = db.rawQuery(statement, null);
-                List<IPost> posts = new ArrayList<>();
+                List<Post> posts = new ArrayList<>();
                 if (cursor.moveToFirst()) {
                     posts.add(PostFactory.create(cursor));
                 }
@@ -174,9 +173,9 @@ public class PostsDatabase extends SQLiteOpenHelper implements PostsRepository {
             }
         };
 
-        return Observable.create(new Observable.OnSubscribe<List<IPost>>() {
+        return Observable.create(new Observable.OnSubscribe<List<Post>>() {
             @Override
-            public void call(Subscriber<? super List<IPost>> subscriber) {
+            public void call(Subscriber<? super List<Post>> subscriber) {
                 try {
                     subscriber.onNext(function.call());
                 } catch (Exception e) {
@@ -189,7 +188,7 @@ public class PostsDatabase extends SQLiteOpenHelper implements PostsRepository {
     /* Factory */
     // --------------------------------------------------------------------------------------------
     private static class PostFactory {
-        static IPost create(Cursor cursor) {
+        static Post create(Cursor cursor) {
             int id = cursor.getInt(cursor.getColumnIndex(PostsContract.PostsTable.COLUMN_NAME_ID));
             int userId = cursor.getInt(cursor.getColumnIndex(PostsContract.PostsTable.COLUMN_NAME_USER_ID));
             String title = cursor.getString(cursor.getColumnIndex(PostsContract.PostsTable.COLUMN_NAME_TITLE));

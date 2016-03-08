@@ -9,7 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.orcchg.myapplication.R;
-import com.orcchg.myapplication.model.interfaces.IPost;
+import com.orcchg.myapplication.model.Post;
 import com.orcchg.myapplication.presenter.posts.PostsPresenter;
 import com.orcchg.myapplication.view.base.BaseLceActivity;
 
@@ -56,7 +56,7 @@ public class PostsActivity extends BaseLceActivity<PostsPresenter> {
         mPresenter.loadPosts();
     }
 
-    public void setPosts(List<IPost> posts) {
+    public void setPosts(List<Post> posts) {
         mPostsAdapter.setPosts(posts);
     }
 

@@ -4,10 +4,8 @@ import android.content.Context;
 
 import com.orcchg.myapplication.database.PostsDatabase;
 import com.orcchg.myapplication.model.Post;
-import com.orcchg.myapplication.model.interfaces.IPost;
 import com.orcchg.myapplication.network.RestAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -48,13 +46,9 @@ public class DataManager {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
         } else {
-            return mDatabase.getAllPosts().flatMap(new Func1<List<IPost>, Observable<List<Post>>>() {
+            return mDatabase.getAllPosts().flatMap(new Func1<List<Post>, Observable<List<Post>>>() {
                 @Override
-                public Observable<List<Post>> call(List<IPost> iPosts) {
-                    List<Post> posts = new ArrayList<>();
-                    for (IPost iPost : iPosts) {
-                        posts.add((Post) iPost);
-                    }
+                public Observable<List<Post>> call(List<Post> posts) {
                     return Observable.just(posts);
                 }
             });

@@ -1,25 +1,24 @@
 package com.orcchg.myapplication.model;
 
 import com.google.gson.annotations.SerializedName;
-import com.orcchg.myapplication.model.interfaces.IPost;
 
 /**
  * Created by MAXA on 07.03.2016.
  */
-public class Post implements IPost {
+public class Post {
     @SerializedName("id") private int mId;
     @SerializedName("userId") private int mUserId;
     @SerializedName("title") private String mTitle;
     @SerializedName("body") private String mBody;
 
-    @Override public int getId() {
+    public int getId() {
         return mId;
     }
-    @Override public int getUserId() { return mUserId; }
-    @Override public String getTitle() {
+    public int getUserId() { return mUserId; }
+    public String getTitle() {
         return mTitle;
     }
-    @Override public String getDescription() {
+    public String getDescription() {
         return mBody;
     }
 

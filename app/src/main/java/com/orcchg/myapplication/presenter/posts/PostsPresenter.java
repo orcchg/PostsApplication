@@ -5,12 +5,10 @@ import android.app.Activity;
 import com.orcchg.myapplication.PostsApplication;
 import com.orcchg.myapplication.core.DataManager;
 import com.orcchg.myapplication.model.Post;
-import com.orcchg.myapplication.model.interfaces.IPost;
 import com.orcchg.myapplication.presenter.base.BasePresenter;
 import com.orcchg.myapplication.view.base.MvpView;
 import com.orcchg.myapplication.view.posts.PostsActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observer;
@@ -22,9 +20,7 @@ import timber.log.Timber;
  */
 public class PostsPresenter extends BasePresenter<PostsActivity> {
 
-
     private final DataManager mDataManager;
-
     private Subscription mSubscription;
 
     public PostsPresenter(MvpView view) {
@@ -53,12 +49,11 @@ public class PostsPresenter extends BasePresenter<PostsActivity> {
         mSubscription = mDataManager.getPosts()
                 .subscribe(new Observer<List<Post>>() {
                     @Override
-                    public void onCompleted() {
-                    }
+                    public void onCompleted() {}
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e("Network error !");
+                        Timber.e("Network error: " + e);
                         showError();
                     }
 
@@ -88,15 +83,11 @@ public class PostsPresenter extends BasePresenter<PostsActivity> {
     }
 
     private void onPostsLoaded(List<Post> posts) {
-        List<IPost> iPosts = new ArrayList<>();
-        for (Post post : posts) {
-            iPosts.add(post);
-        }
-        mDataManager.getDatabase().addPosts(iPosts);
+        mDataManager.getDatabase().addPosts(posts);
         mDataManager.invalidateCache(false);
         if (isViewAttached()) {
             getView().showContent();
-            getView().setPosts(iPosts);
+            getView().setPosts(posts);
         }
     }
 }

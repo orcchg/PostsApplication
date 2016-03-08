@@ -1,6 +1,6 @@
 package com.orcchg.myapplication.database.repository;
 
-import com.orcchg.myapplication.model.interfaces.IPost;
+import com.orcchg.myapplication.model.Post;
 
 import java.util.List;
 
@@ -11,10 +11,10 @@ import rx.Observable;
  */
 public interface PostsRepository {
 
-    void addPosts(List<IPost> posts);
-    void updatePosts(List<IPost> posts);
-    void removePosts(List<IPost> posts);
+    void addPosts(List<Post> posts);
+    void updatePosts(List<Post> posts);
+    void removePosts(List<Post> posts);
 
-    Observable<List<IPost>> getAllPosts();
-    Observable<List<IPost>> queryPosts(PostSpecification specification);
+    Observable<List<Post>> getAllPosts();
+    Observable<List<Post>> queryPosts(PostSpecification specification);
 }
