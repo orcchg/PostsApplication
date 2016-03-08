@@ -165,7 +165,7 @@ public class PostsDatabase extends SQLiteOpenHelper implements PostsRepository {
             public List<Post> call() throws Exception {
                 Cursor cursor = db.rawQuery(statement, null);
                 List<Post> posts = new ArrayList<>();
-                if (cursor.moveToFirst()) {
+                while (cursor.moveToNext()) {
                     posts.add(PostFactory.create(cursor));
                 }
                 cursor.close();
